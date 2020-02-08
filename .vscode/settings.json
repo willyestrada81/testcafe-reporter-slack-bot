@@ -1,0 +1,8 @@
+{
+  "standard._legacyModuleResolve": true,
+  "standard.autoFixOnSave": true,
+  "standard.run": "onSave",
+  "standard.usePackageJson": true,
+  "editor.find.autoFindInSelection": "always",
+  "emmet.showSuggestionsAsSnippets": true
+}

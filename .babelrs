@@ -1,0 +1,4 @@
+{
+    "exclude": ["excluded/**"],
+    "presets": [ "@babel/preset-env" ]
+}
