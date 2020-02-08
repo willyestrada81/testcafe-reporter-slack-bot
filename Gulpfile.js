@@ -1,48 +1,39 @@
-var gulp = require('gulp');
-var eslint = require('gulp-eslint');
-var babel = require('gulp-babel');
-var del = require('del');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const mocha = require('gulp-mocha');
+const del = require('del');
 
-function clean (cb) {
-    del('lib', cb);
-}
+gulp.task('clean', (cb) => del('lib', cb));
 
-function lint () {
-    return gulp
-        .src([
-            'src/**/*.js',
-            'test/**/*.js',
-            'Gulpfile.js'
-        ])
-        .pipe(eslint())
-        .pipe(eslint.format())
-        .pipe(eslint.failAfterError());
-}
+gulp.task('build', gulp.series(['clean'], () => gulp
+    .src('src/**/*.js')
+    .pipe(
+        babel({
+            presets: ['@babel/env'],
+        }),
+    )
+    .pipe(gulp.dest('lib'))));
 
-function build () {
-    return gulp
-        .src('src/**/*.js')
-        .pipe(babel())
-        .pipe(gulp.dest('lib'));
-}
+gulp.task('test', () => {
+    process.env.NODE_ENV = 'test';
+    return gulp.src('test/**.js').pipe(
+        mocha({
+            ui:       'bdd',
+            reporter: 'spec',
+            timeout:  typeof v8debug === 'undefined' ? 2000 : Infinity, // NOTE: disable timeouts in debug
+        }),
+    );
+});
 
-function preview () {
-    var buildReporterPlugin = require('testcafe').embeddingUtils.buildReporterPlugin;
-    var pluginFactory = require('./lib');
-    var reporterTestCalls = require('./test/utils/reporter-test-calls');
-    var plugin = buildReporterPlugin(pluginFactory);
+gulp.task('preview', () => {
+    const { buildReporterPlugin } = require('testcafe').embeddingUtils;
+    const pluginFactory = require('./lib');
+    const reporterTestCalls = require('./test/utils/reporter-test-calls');
+    const plugin = buildReporterPlugin(pluginFactory);
 
-    console.log();
-
-    reporterTestCalls.forEach(function (call) {
-        plugin[call.method].apply(plugin, call.args);
+    reporterTestCalls.forEach((call) => {
+        plugin[call.method](...call.args);
     });
 
     process.exit(0);
-}
-
-exports.clean = clean;
-exports.lint = lint;
-exports.test = gulp.series(clean, lint, build);
-exports.build = gulp.series(clean, lint, build);
-exports.preview = gulp.series(clean, lint, build, preview);
+});

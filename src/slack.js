@@ -1,3 +1,4 @@
+'use strict';
 require('dotenv').config();
 
 
@@ -5,8 +6,8 @@ const axios = require('axios').default;
 
 const token = process.env.SLACK_API_TOKEN;
 
-export default class Slack {
-    constructor (report) {
+class Slack {
+    constractor (report) {
         this.startTime = report.startTime;
         this.endTime = report.endTime;
         this.userAgents = report.userAgents;
@@ -28,30 +29,30 @@ export default class Slack {
             blocks: this.block
         };
         this.fail = 0;
-        this.durationMs = 0;
+        this.durationMs = 0; 
     }
 
-    async generateMessage () {
+    generateMessage () {
         for (let i = 0; i < this.fixtures.length; i++) {
-            await this.insertFixture(this.fixtures[i].name);
+            this.insertFixture(this.fixtures[i].name);
             const testsInFixture = this.fixtures[i].tests.length; // console.log(report.fixtures[i].name)
 
             for (let n = 0; n < testsInFixture; n++) {
-                // console.log(report.fixtures[i].tests[n].name)
+            // console.log(report.fixtures[i].tests[n].name)
                 this.durationMs += this.fixtures[i].tests[n].durationMs;
                 const err = this.fixtures[i].tests[n].errs;
 
                 if (err.length > 0) {
-                    await this.insertTest(this.fixtures[i].tests[n].name, true);
+                    this.insertTest(this.fixtures[i].tests[n].name, true);
                     err.forEach(error => this.insertErrors(error));
                     this.fail += 1;
                 }
-                else await this.insertTest(this.fixtures[i].tests[n].name, false);
+                else this.insertTest(this.fixtures[i].tests[n].name, false);
             }
         }
     }
 
-    async insertFixture (text) {
+    insertFixture (text) {
         const fixture = {
             type: 'section',
             text: {
@@ -63,7 +64,7 @@ export default class Slack {
         this.block.push(fixture);
     }
 
-    async insertTest (text, errorsExist = Boolean) {
+    insertTest (text, errorsExist = Boolean) {
         let test = {};
 
         if (errorsExist) {
@@ -88,7 +89,7 @@ export default class Slack {
         this.block.push(test);
     }
 
-    async insertErrors (text) {
+    insertErrors (text) {
         const testError = {
             type: 'section',
             text: {
@@ -100,7 +101,7 @@ export default class Slack {
         this.block.push(testError);
     }
 
-    async createResultBlock () {
+    createResultBlock () {
         this.block.push({
             type: 'section',
             text: {
@@ -112,7 +113,7 @@ export default class Slack {
         });
     }
 
-    async sendToSlack () {
+    sendToSlack () {
         axios({
             method:  'post',
             url:     `https://hooks.slack.com/services/${token}`,
@@ -123,7 +124,7 @@ export default class Slack {
         });
     }
 
-    async msToTime (duration) {
+    msToTime (duration) {
         let seconds = parseInt(duration / 1000 % 60, 10);
 
         let minutes = parseInt(duration / (1000 * 60) % 60, 10);
@@ -135,5 +136,7 @@ export default class Slack {
         seconds = seconds < 10 ? '0' + seconds : seconds;
         return hours + ':' + minutes + ':' + seconds;
     }
-
 }
+module.exports = {
+    Slack: Slack,
+};
