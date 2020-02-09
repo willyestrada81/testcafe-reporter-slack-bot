@@ -1,32 +1,33 @@
-var TestRunErrorFormattableAdapter = require('testcafe').embeddingUtils.TestRunErrorFormattableAdapter;
-var UncaughtErrorOnPage = require('testcafe').embeddingUtils.testRunErrors.UncaughtErrorOnPage;
-var ActionElementNotFoundError = require('testcafe').embeddingUtils.testRunErrors.ActionElementNotFoundError;
-var testCallsite = require('./test-callsite');
+const { TestRunErrorFormattableAdapter } = require('testcafe').embeddingUtils;
+const { UncaughtErrorOnPage } = require('testcafe').embeddingUtils.testRunErrors;
+const { ActionElementNotFoundError } = require('testcafe').embeddingUtils.testRunErrors;
+const testCallsite = require('./test-callsite');
 
 function makeErrors (errDescrs) {
-    return errDescrs.map(function (descr) {
-        return new TestRunErrorFormattableAdapter(descr.err, descr.metaInfo);
-    });
+    return errDescrs.map((descr) => new TestRunErrorFormattableAdapter(descr.err, descr.metaInfo));
 }
+
+const startDate = new Date('1970-01-01T00:00:00.000Z');
+const endDate = new Date('1970-01-01T00:15:25.000Z');
 
 module.exports = [
     {
         method: 'reportTaskStart',
         args:   [
-            new Date('1970-01-01T00:00:00.000Z'),
+            `${startDate.getUTCDate()}/${startDate.getUTCMonth() + 1}/${startDate.getUTCFullYear()} ${startDate.getUTCHours()}:${startDate.getUTCMinutes()}:${startDate.getUTCSeconds()}`,
             [
                 'Chrome 41.0.2227 / Mac OS X 10.10.1',
-                'Firefox 47 / Mac OS X 10.10.1'
+                'Firefox 47 / Mac OS X 10.10.1',
             ],
-            7
-        ]
+            6,
+        ],
     },
     {
         method: 'reportFixtureStart',
         args:   [
             'First fixture',
-            './fixture1.js'
-        ]
+            './fixture1.js',
+        ],
     },
     {
         method: 'reportTestDone',
@@ -36,9 +37,9 @@ module.exports = [
                 errs:           [],
                 durationMs:     74000,
                 unstable:       true,
-                screenshotPath: '/screenshots/1445437598847'
-            }
-        ]
+                screenshotPath: '/screenshots/1445437598847',
+            },
+        ],
     },
     {
         method: 'reportTestDone',
@@ -54,25 +55,25 @@ module.exports = [
                             userAgent:      'Chrome 41.0.2227 / Mac OS X 10.10.1',
                             screenshotPath: '/screenshots/1445437598847/errors',
                             callsite:       testCallsite,
-                            testRunState:   'inTest'
-                        }
+                            testRunState:   'inTest',
+                        },
                     },
                     {
-                        err: new ActionElementNotFoundError({ apiFnChain: ['one', 'two', 'three'], apiFnIndex: 1 }),
+                        err: new ActionElementNotFoundError({ apiFnChain: [] }),
 
                         metaInfo: {
                             userAgent:    'Firefox 47 / Mac OS X 10.10.1',
                             callsite:     testCallsite,
-                            testRunState: 'inTest'
-                        }
-                    }
+                            testRunState: 'inTest',
+                        },
+                    },
                 ]),
 
                 durationMs:     74000,
                 unstable:       false,
-                screenshotPath: '/screenshots/1445437598847'
-            }
-        ]
+                screenshotPath: '/screenshots/1445437598847',
+            },
+        ],
     },
     {
         method: 'reportTestDone',
@@ -82,16 +83,16 @@ module.exports = [
                 errs:           [],
                 durationMs:     74000,
                 unstable:       false,
-                screenshotPath: null
-            }
-        ]
+                screenshotPath: null,
+            },
+        ],
     },
     {
         method: 'reportFixtureStart',
         args:   [
             'Second fixture',
-            './fixture2.js'
-        ]
+            './fixture2.js',
+        ],
     },
     {
         method: 'reportTestDone',
@@ -101,9 +102,9 @@ module.exports = [
                 errs:           [],
                 durationMs:     74000,
                 unstable:       false,
-                screenshotPath: null
-            }
-        ]
+                screenshotPath: null,
+            },
+        ],
     },
     {
         method: 'reportTestDone',
@@ -113,9 +114,9 @@ module.exports = [
                 errs:           [],
                 durationMs:     74000,
                 unstable:       false,
-                screenshotPath: null
-            }
-        ]
+                screenshotPath: null,
+            },
+        ],
     },
     {
         method: 'reportTestDone',
@@ -126,16 +127,16 @@ module.exports = [
                 durationMs:     0,
                 unstable:       false,
                 screenshotPath: null,
-                skipped:        false
-            }
-        ]
+                skipped:        false,
+            },
+        ],
     },
     {
         method: 'reportFixtureStart',
         args:   [
             'Third fixture',
-            './fixture3.js'
-        ]
+            './fixture3.js',
+        ],
     },
     {
         method: 'reportTestDone',
@@ -144,34 +145,32 @@ module.exports = [
             {
                 errs: makeErrors([
                     {
-                        err: new ActionElementNotFoundError({ apiFnChain: ['one', 'two', 'three'], apiFnIndex: 1 }),
+                        err: new ActionElementNotFoundError({ apiFnChain: [] }),
 
                         metaInfo: {
                             userAgent:    'Firefox 47 / Mac OS X 10.10.1',
                             callsite:     testCallsite,
-                            testRunState: 'inBeforeEach'
-                        }
-                    }
+                            testRunState: 'inBeforeEach',
+                        },
+                    },
                 ]),
 
                 durationMs:     74000,
                 unstable:       true,
-                screenshotPath: null
-            }
-        ]
+                screenshotPath: null,
+            },
+        ],
     },
     {
         method: 'reportTaskDone',
         args:   [
-            new Date('1970-01-01T00:15:25.000Z'),
+            `${endDate.getUTCDate()}/${endDate.getUTCMonth() + 1}/${endDate.getUTCFullYear()} ${endDate.getUTCHours()}:${endDate.getUTCMinutes()}:${endDate.getUTCSeconds()}`,
             4,
             [
-                'Was unable to take a screenshot due to an error.\n\nReferenceError: someVar is not defined',
-                'Was unable to take a screenshot due to an error.\n\nReferenceError: someOtherVar is not defined',
-                'Was unable to take screenshots because the screenshot directory is not specified. ' +
-                'To specify it, use the "-s" or "--screenshots" command line option or the ' +
-                '"screenshots" method of the test runner in case you are using API.'
-            ]
-        ]
-    }
+                'Was unable to take screenshots because the screenshot directory is not specified. '
+          + 'To specify it, use the "-s" or "--screenshots" command line option or the '
+          + '"screenshots" method of the test runner in case you are using API.',
+            ],
+        ],
+    },
 ];

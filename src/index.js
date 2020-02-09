@@ -1,5 +1,6 @@
 'use strict';
-const regeneratorRuntime = require("regenerator-runtime");
+const regeneratorRuntime = require('regenerator-runtime');
+
 require('dotenv').config();
 const axios = require('axios').default;
 const token = process.env.SLACK_API_TOKEN;
@@ -53,28 +54,8 @@ module.exports = () => ({
             screenshotPath: testRunInfo.screenshotPath,
             skipped:        testRunInfo.skipped
         });
-      
-        const hasErr = !!testRunInfo.errs.length;
-
-        const result = hasErr ? '✖' : '✓';
-
-        const title = this.indentString(`${result} ${name.split('!')[0]}`, 4);
-
-        if (hasErr) {
-            this.write(this.chalk.red(`${title}`))
-                .newline();
-            testRunInfo.errs.forEach((err, idx) => {
-                this.newline()
-                    .write(this.formatError(err, this.chalk.red(`${idx + 1}) `)))
-                    .newline();
-            });
-        }
-        else {
-            this.write(this.chalk.green(`${title}`))
-                .newline();
-        }
     },
-
+    
     async reportTaskDone (endTime, passed, warnings) {
         this.report.passed   = passed;
         this.report.endTime  = endTime;
@@ -145,7 +126,7 @@ module.exports = () => ({
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: '\t - `'+ text + '`\n'
+                    text: '\t - `' + text + '`\n'
                 }
             };
             
@@ -153,6 +134,7 @@ module.exports = () => ({
         };
         const generateMessage = async () => {
             const r = await this.report;
+
             for (let i = 0; i < r.fixtures.length; i++) {
                 insertFixture(r.fixtures[i].name);
                 const testsInFixture = r.fixtures[i].tests.length; 
@@ -169,18 +151,6 @@ module.exports = () => ({
                     else insertTest(r.fixtures[i].tests[n].name, false);
                 }
             }
-        };
-        const msToTime = (duration) => {
-            let seconds = parseInt(duration / 1000 % 60, 10);
-            
-            let minutes = parseInt(duration / (1000 * 60) % 60, 10);
-            
-            let hours = parseInt(duration / (1000 * 60 * 60) % 24, 10);
-            
-            hours = hours < 10 ? '0' + hours : hours;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-            return hours + ':' + minutes + ':' + seconds;
         };
         const createResultBlock = () => {
             block.push({
